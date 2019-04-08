@@ -1,0 +1,20 @@
+spring:
+  cloud:
+    gateway:
+      #default-filters: LoggingFilter
+      routes:
+        # =====================================
+        - id: setstatus_route
+          uri: https://example.org
+          predicates:
+            - Path=/echo
+#          filters:
+#            - name: SetStatus
+#              args:
+#                status: 401
+        - id: test_redirect_url
+          uri: https://example.org/original/url/*
+#          filters:
+#            - Path=/echo/hest
+          predicates:
+            - Path=/test/redirect/*
