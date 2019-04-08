@@ -1,20 +1,44 @@
 spring:
   cloud:
     gateway:
-      #default-filters: LoggingFilter
       routes:
         # =====================================
-        - id: setstatus_route
-          uri: https://example.org
+        # 1. simpel gateway funktionalitet (ingen sikkerhed)
+        - id: simpel1
           predicates:
-            - Path=/echo
-#          filters:
-#            - name: SetStatus
-#              args:
-#                status: 401
-        - id: test_redirect_url
-          uri: https://example.org/original/url/*
-#          filters:
-#            - Path=/echo/hest
+            - Path=/simpel/gateway1 # præcis match.
+          uri: https://httpbin.org/get
+        - id: simpel2
           predicates:
-            - Path=/test/redirect/*
+            - Path=/simpel # præcis match. Gør ikke nogen forskel om det er /simpel eller /simpel/
+          uri: https://httpbin.org/get
+        - id: simpel3 # matcher det samme som
+          predicates:
+            - Path=/ # præcis match. Roden.
+          uri: https://httpbin.org/get
+        - id: simpel4
+          predicates:
+            - Path=/simpel/* # regex match
+          uri: https://httpbin.org/get
+
+        # =====================================
+        # 2. gateway med sikkerhed
+        - id: sikkerhed1
+          predicates:
+            - Path=/sikkerhed/gateway1 # præcis match.
+          uri: https://httpbin.org/get
+          sikkerhed: BASIC AUTH
+        - id: sikkerhed2
+          predicates:
+            - Path=/sikkerhed # præcis match. Gør ikke nogen forskel om det er /simpel eller /simpel/
+          uri: https://httpbin.org/get
+          sikkerhed: SAML
+        - id: sikkerhed3 # matcher det samme som
+          predicates:
+            - Path=/ # præcis match. Roden. Bruges aldrig pga. ruten 'simpel3' er først
+          uri: https://httpbin.org/get
+          sikkerhed: FAKE
+        - id: sikkerhed4
+          predicates:
+            - Path=/sikkerhed/* # regex match
+          uri: https://httpbin.org/get
